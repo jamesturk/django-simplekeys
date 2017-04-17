@@ -1,10 +1,15 @@
 from __future__ import division
+import time
 import datetime
 from .models import Key, Limit
-from .backends import MemoryBackend, RateLimitError
+from .backends import MemoryBackend
 
 
 class VerificationError(Exception):
+    pass
+
+
+class RateLimitError(Exception):
     pass
 
 
@@ -27,8 +32,25 @@ def verify(key, zone):
         raise VerificationError('key does not have access to zone')
 
     # enforce rate limiting - will raise RateLimitError if exhausted
-    kz = (key, zone)
-    backend.get_token(kz, limit.requests_per_second, limit.burst_size)
+    # replenish first
+    tokens, last_time = backend.get_tokens_and_timestamp(key, zone)
+
+    if last_time is None:
+        # if this is the first time, fill the bucket
+        tokens = limit.burst_size
+    else:
+        # increment bucket, careful not to overfill
+        tokens = min(
+            tokens + (limit.requests_per_second * (time.time() - last_time)),
+            limit.burst_size
+        )
+
+    # now try to decrement count
+    if tokens >= 1:
+        tokens -= 1
+        backend.set_token_count(key, zone, tokens)
+    else:
+        raise RateLimitError('exhausted tokens')
 
     # enforce daily/monthly quotas
     if limit.quota_period == 'd':
