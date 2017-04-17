@@ -1,11 +1,10 @@
-import time
 import datetime
 from django.test import TestCase
 from freezegun import freeze_time
 
-from .models import Tier, Zone, Key
-from .verifier import (verify, VerificationError, RateLimitError, QuotaError,
-                       backend)
+from ..models import Tier, Zone, Key
+from ..verifier import (verify, VerificationError, RateLimitError, QuotaError,
+                        backend)
 
 
 class UsageTestCase(TestCase):
@@ -102,32 +101,34 @@ class UsageTestCase(TestCase):
         self.assertRaises(VerificationError, verify, 'bronze1', 'secret')
 
     def test_verifier_rate_limit(self):
-        # to start - we should have full capacity for a burst of 10
-        for x in range(10):
+        with freeze_time() as frozen_dt:
+            # to start - we should have full capacity for a burst of 10
+            for x in range(10):
+                verify('bronze1', 'default')
+
+            # this next one should raise an exception
+            self.assertRaises(RateLimitError, verify, 'bronze1', 'default')
+
+            # let's go forward 1sec, this will let the bucket get 2 more tokens
+            frozen_dt.tick()
+
+            # two more, then limited
             verify('bronze1', 'default')
-
-        # this next one should raise an exception
-        self.assertRaises(RateLimitError, verify, 'bronze1', 'default')
-
-        # let's wait one second, this will let the bucket get two more tokens
-        time.sleep(1)
-
-        # two more, then limited
-        verify('bronze1', 'default')
-        verify('bronze1', 'default')
-        self.assertRaises(RateLimitError, verify, 'bronze1', 'default')
+            verify('bronze1', 'default')
+            self.assertRaises(RateLimitError, verify, 'bronze1', 'default')
 
     def test_verifier_rate_limit_full_refill(self):
-        # let's use the premium zone now - 1req/sec. & burst of 2
-        verify('bronze1', 'premium')
-        verify('bronze1', 'premium')
-        self.assertRaises(RateLimitError, verify, 'bronze1', 'premium')
+        with freeze_time() as frozen_dt:
+            # let's use the premium zone now - 1req/sec. & burst of 2
+            verify('bronze1', 'premium')
+            verify('bronze1', 'premium')
+            self.assertRaises(RateLimitError, verify, 'bronze1', 'premium')
 
-        # in three seconds - ensure we haven't let capacity surpass burst rate
-        time.sleep(3)
-        verify('bronze1', 'premium')
-        verify('bronze1', 'premium')
-        self.assertRaises(RateLimitError, verify, 'bronze1', 'premium')
+            # in 5 seconds - ensure we haven't let capacity surpass burst rate
+            frozen_dt.tick(delta=datetime.timedelta(seconds=5))
+            verify('bronze1', 'premium')
+            verify('bronze1', 'premium')
+            self.assertRaises(RateLimitError, verify, 'bronze1', 'premium')
 
     def test_verifier_rate_limit_key_dependent(self):
         # ensure that the rate limit is unique per-key
@@ -192,5 +193,26 @@ class UsageTestCase(TestCase):
             for x in range(10):
                 verify('gold', 'secret')
 
-    # TODO: test_verifier_quota_key_dependent
-    # TODO: test_verifier_quota_zone_dependent
+    def test_verifier_quota_key_dependent(self):
+        with freeze_time('2017-04-17') as frozen_dt:
+            # 1 req/sec from bronze1 and bronze2
+            for x in range(10):
+                verify('bronze1', 'premium')
+                verify('bronze2', 'premium')
+                frozen_dt.tick()
+
+            # 11th in either should be a problem - day total is exhausted
+            self.assertRaises(QuotaError, verify, 'bronze1', 'premium')
+            self.assertRaises(QuotaError, verify, 'bronze2', 'premium')
+
+    def test_verifier_quota_zone_dependent(self):
+        with freeze_time('2017-04-17') as frozen_dt:
+            # should be able to do 10 in premium & secret without issue
+            for x in range(10):
+                verify('gold', 'premium')
+                verify('gold', 'secret')
+                frozen_dt.tick()
+
+            # 11th in either should be a problem
+            self.assertRaises(QuotaError, verify, 'gold', 'premium')
+            self.assertRaises(QuotaError, verify, 'gold', 'secret')

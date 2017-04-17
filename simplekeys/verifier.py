@@ -29,7 +29,9 @@ def verify(key, zone):
     except Key.DoesNotExist:
         raise VerificationError('no valid key')
     except Limit.DoesNotExist:
-        raise VerificationError('key does not have access to zone')
+        raise VerificationError('key does not have access to zone {}'.format(
+            zone
+        ))
 
     # enforce rate limiting - will raise RateLimitError if exhausted
     # replenish first
@@ -50,7 +52,9 @@ def verify(key, zone):
         tokens -= 1
         backend.set_token_count(key, zone, tokens)
     else:
-        raise RateLimitError('exhausted tokens')
+        raise RateLimitError('exhausted tokens {} req/sec, burst {}'.format(
+            limit.requests_per_second, limit.burst_size
+        ))
 
     # enforce daily/monthly quotas
     if limit.quota_period == 'd':
@@ -60,6 +64,8 @@ def verify(key, zone):
 
     if (backend.get_and_inc_quota_value(key, zone, quota_range) >
             limit.quota_requests):
-        raise QuotaError('quota exceeded')
+        raise QuotaError('quota exceeded {}/{}'.format(
+            limit.quota_requests, limit.get_quota_period_display()
+        ))
 
     return True
