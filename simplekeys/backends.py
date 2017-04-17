@@ -1,4 +1,5 @@
 import time
+from collections import Counter
 
 
 class RateLimitError(Exception):
@@ -17,6 +18,13 @@ class AbstractBackend(object):
     def set_token_count(self, kz, tokens):
         """
             set counter for kz & timestamp to current time
+        """
+        raise NotImplementedError()
+
+    def get_and_inc_quota_value(self, key, zone, quota_range):
+        """
+            increment & get quota value
+            (value will increase regardless of validity)
         """
         raise NotImplementedError()
 
@@ -49,6 +57,7 @@ class MemoryBackend(AbstractBackend):
     def reset(self):
         self._counter = {}
         self._last_replenished = {}
+        self._quota = Counter()
 
     def get_tokens_and_timestamp(self, kz):
         return self._counter.get(kz, 0), self._last_replenished.get(kz)
@@ -56,3 +65,8 @@ class MemoryBackend(AbstractBackend):
     def set_token_count(self, kz, tokens):
         self._last_replenished[kz] = time.time()
         self._counter[kz] = tokens
+
+    def get_and_inc_quota_value(self, key, zone, quota_range):
+        quota_key = '{}-{}-{}'.format(key, zone, quota_range)
+        self._quota[quota_key] += 1
+        return self._quota[quota_key]

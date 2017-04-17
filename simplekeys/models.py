@@ -1,11 +1,9 @@
 from django.db import models
 
-QUOTA_DAILY = 60*60*24
-QUOTA_MONTHLY = 60*60*24*30
 
 QUOTA_PERIODS = (
-    (QUOTA_DAILY, 'daily'),
-    (QUOTA_MONTHLY, 'monthly'),
+    ('d', 'daily'),
+    ('m', 'monthly'),
 )
 
 
@@ -29,8 +27,8 @@ class Zone(models.Model):
 class Limit(models.Model):
     tier = models.ForeignKey(Tier, related_name='limits')
     zone = models.ForeignKey(Zone, related_name='limits')
+    quota_period = models.CharField(max_length=1, choices=QUOTA_PERIODS)
     quota_requests = models.PositiveIntegerField()
-    quota_period = models.PositiveIntegerField(choices=QUOTA_PERIODS)
     requests_per_second = models.PositiveIntegerField()
     burst_size = models.PositiveIntegerField()
 

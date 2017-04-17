@@ -1,8 +1,11 @@
 import time
+import datetime
 from django.test import TestCase
+from freezegun import freeze_time
 
-from .models import Tier, Zone, Key, QUOTA_DAILY
-from .verifier import VerificationError, verify, RateLimitError, backend
+from .models import Tier, Zone, Key
+from .verifier import (verify, VerificationError, RateLimitError, QuotaError,
+                       backend)
 
 
 class UsageTestCase(TestCase):
@@ -19,14 +22,14 @@ class UsageTestCase(TestCase):
         self.bronze.limits.create(
             zone=self.default_zone,
             quota_requests=100,
-            quota_period=QUOTA_DAILY,
+            quota_period='d',
             requests_per_second=2,
             burst_size=10,
         )
         self.bronze.limits.create(
             zone=self.premium_zone,
             quota_requests=10,
-            quota_period=QUOTA_DAILY,
+            quota_period='d',
             requests_per_second=1,
             burst_size=2,
         )
@@ -34,23 +37,23 @@ class UsageTestCase(TestCase):
         self.gold.limits.create(
             zone=self.default_zone,
             quota_requests=1000,
-            quota_period=QUOTA_DAILY,
+            quota_period='d',
             requests_per_second=5,
             burst_size=10,
         )
         self.gold.limits.create(
             zone=self.premium_zone,
-            quota_requests=100,
-            quota_period=QUOTA_DAILY,
-            requests_per_second=1,
-            burst_size=2,
+            quota_requests=10,
+            quota_period='d',
+            requests_per_second=5,
+            burst_size=10,
         )
         self.gold.limits.create(
             zone=self.secret_zone,
-            quota_requests=100,
-            quota_period=QUOTA_DAILY,
-            requests_per_second=1,
-            burst_size=2,
+            quota_requests=10,
+            quota_period='m',       # monthly limit for secret zone
+            requests_per_second=5,
+            burst_size=10,
         )
 
         Key.objects.create(
@@ -138,7 +141,6 @@ class UsageTestCase(TestCase):
         self.assertRaises(RateLimitError, verify, 'bronze1', 'premium')
         self.assertRaises(RateLimitError, verify, 'bronze2', 'premium')
 
-
     def test_verifier_rate_limit_zone_dependent(self):
         # ensure that the rate limit is unique per-zone
 
@@ -150,3 +152,45 @@ class UsageTestCase(TestCase):
 
         # but premium is still exhausted
         self.assertRaises(RateLimitError, verify, 'bronze1', 'premium')
+
+    def test_verifier_quota_day(self):
+        # let's pretend a day has passed, we can call again!
+        with freeze_time('2017-04-17') as frozen_dt:
+            # gold can hit premium only 10x/day (burst is also 10)
+            for x in range(10):
+                verify('gold', 'premium')
+
+            # after 1 second, should have another token
+            frozen_dt.tick()
+
+            # but still no good- we've hit our daily limit
+            self.assertRaises(QuotaError, verify, 'gold', 'premium')
+
+            frozen_dt.tick(delta=datetime.timedelta(days=1))
+            for x in range(10):
+                verify('gold', 'premium')
+
+    def test_verifier_quota_month(self):
+        # need to make sure we aren't on the last day of a month
+        with freeze_time('2017-04-17') as frozen_dt:
+            # gold can hit secret only 10x/month (burst is also 10)
+            for x in range(10):
+                verify('gold', 'secret')
+
+            # after 1 second, should have another token
+            frozen_dt.tick()
+
+            # but still no good- we've hit our monthly limit
+            self.assertRaises(QuotaError, verify, 'gold', 'secret')
+
+            # let's pretend a day has passed... still no good
+            frozen_dt.tick(delta=datetime.timedelta(days=1))
+            self.assertRaises(QuotaError, verify, 'gold', 'secret')
+
+            # but a month later? we're good!
+            frozen_dt.tick(delta=datetime.timedelta(days=30))
+            for x in range(10):
+                verify('gold', 'secret')
+
+    # TODO: test_verifier_quota_key_dependent
+    # TODO: test_verifier_quota_zone_dependent

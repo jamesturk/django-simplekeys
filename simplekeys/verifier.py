@@ -1,9 +1,14 @@
 from __future__ import division
+import datetime
 from .models import Key, Limit
 from .backends import MemoryBackend, RateLimitError
 
 
 class VerificationError(Exception):
+    pass
+
+
+class QuotaError(Exception):
     pass
 
 
@@ -25,6 +30,14 @@ def verify(key, zone):
     kz = (key, zone)
     backend.get_token(kz, limit.requests_per_second, limit.burst_size)
 
-    # TODO: enforce overall quota
+    # enforce daily/monthly quotas
+    if limit.quota_period == 'd':
+        quota_range = datetime.datetime.utcnow().strftime('%Y%m%d')
+    elif limit.quota_period == 'm':
+        quota_range = datetime.datetime.utcnow().strftime('%Y%m')
+
+    if (backend.get_and_inc_quota_value(key, zone, quota_range) >
+            limit.quota_requests):
+        raise QuotaError('quota exceeded')
 
     return True
