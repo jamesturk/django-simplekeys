@@ -1,8 +1,14 @@
-from django.forms import ModelForm
+from django import forms
 from .models import Key
 
 
-class KeyRegistrationForm(ModelForm):
+class KeyRegistrationForm(forms.ModelForm):
     class Meta:
         model = Key
         fields = ['email', 'name', 'organization']
+
+
+class KeyConfirmationForm(forms.Form):
+    email = forms.CharField(widget=forms.HiddenInput)
+    key = forms.CharField(widget=forms.HiddenInput)
+    confirm_hash = forms.CharField(widget=forms.HiddenInput)
