@@ -1,0 +1,13 @@
+<html>
+  <head>
+    <title>API Key Registration</title>
+  </head>
+  <body>
+    <h1>API Key Registration</h1>
+    <form action="." method="POST">
+      {{ registration_form.as_ul }}
+      <input type="submit">
+      {% csrf_token %}
+    </form>
+  </body>
+</html>

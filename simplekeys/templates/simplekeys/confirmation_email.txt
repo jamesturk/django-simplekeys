@@ -1,0 +1,13 @@
+{{ key.name }},
+
+Your API key registration is almost done!
+
+Your new API key is: {{ key.key }}
+
+Please visit:
+
+{{ confirmation_url|safe }}
+
+to activate your key.
+
+Thanks!

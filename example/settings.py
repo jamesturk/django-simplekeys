@@ -6,11 +6,15 @@ SECRET_KEY = 'not-a-secret'
 DEBUG = True
 ALLOWED_HOSTS = []
 
+SITE_ID = 1
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.staticfiles',
     'django.contrib.sessions',
+    'django.contrib.sites',
     'django.contrib.contenttypes',
     'simplekeys',
 ]
