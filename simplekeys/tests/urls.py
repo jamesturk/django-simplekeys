@@ -14,5 +14,9 @@ urlpatterns = [
     url(r'^special/$', views.special),
 
     url(r'^register/$', RegistrationView.as_view()),
+    url(r'^register-special/$', RegistrationView.as_view(
+        tier='special',
+        confirmation_url='https://confirm.example.com/special-confirm/',
+    )),
     url(r'^confirm/$', ConfirmationView.as_view()),
 ]

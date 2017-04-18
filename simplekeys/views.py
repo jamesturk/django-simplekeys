@@ -23,10 +23,10 @@ class RegistrationView(View):
         upon submission, send an email sending user to confirmation page
     """
     template_name = "simplekeys/register.html"
-    default_status = 'u'
     email_subject = 'API Key Registration'
     email_message_template = 'simplekeys/confirmation_email.txt'
     from_email = settings.DEFAULT_FROM_EMAIL
+    tier = 'default'
     redirect = '/'
     confirmation_url = '/confirm/'
 
@@ -43,9 +43,9 @@ class RegistrationView(View):
 
         # go ahead w/ creation
         key = form.instance
-        default_tier = getattr(settings, 'SIMPLEKEYS_DEFAULT_TIER', 'default')
-        key.tier = Tier.objects.get(slug=default_tier)
-        key.status = self.default_status
+        key.tier = Tier.objects.get(slug=self.tier)
+        # TODO: option to override this and avoid sending email?
+        key.status = 'u'
         key.save()
 
         # send email & redirect user
