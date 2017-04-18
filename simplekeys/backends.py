@@ -1,5 +1,6 @@
 import time
 from collections import Counter
+from django.conf import settings
 
 
 class AbstractBackend(object):
@@ -47,3 +48,24 @@ class MemoryBackend(AbstractBackend):
         quota_key = '{}-{}-{}'.format(key, zone, quota_range)
         self._quota[quota_key] += 1
         return self._quota[quota_key]
+
+
+class CacheBackend(AbstractBackend):
+    def __init__(self):
+        from django.core.cache import caches
+        self.cache = caches[getattr(settings, 'SIMPLEKEYS_CACHE', 'default')]
+        # 25 hour default, just longer than a day so that day limits are OK
+        self.timeout = getattr(settings, 'SIMPLEKEYS_CACHE_TIMEOUT', 25*60*60)
+
+    def get_tokens_and_timestamp(self, key, zone):
+        kz = '{}-{}'.format(key, zone)
+        return self.cache.get_or_set(kz, (0, None), self.timeout)
+
+    def set_token_count(self, key, zone, tokens):
+        kz = '{}-{}'.format(key, zone)
+        self.cache.set(kz, (tokens, time.time()), self.timeout)
+
+    def get_and_inc_quota_value(self, key, zone, quota_range):
+        quota_key = '{}-{}-{}'.format(key, zone, quota_range)
+        self.cache.get_or_set(quota_key, 0)
+        return self.cache.incr(quota_key)

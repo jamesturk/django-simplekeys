@@ -1,8 +1,7 @@
-import datetime
 from django.test import TestCase
 from freezegun import freeze_time
 
-from ..backends import MemoryBackend
+from ..backends import MemoryBackend, CacheBackend
 
 
 class MemoryBackendTestCase(TestCase):
@@ -38,3 +37,13 @@ class MemoryBackendTestCase(TestCase):
         self.assertEquals(b.get_and_inc_quota_value('key', 'zone', '20170411'), 1)
         self.assertEquals(b.get_and_inc_quota_value('key2', 'zone', '20170411'), 1)
         self.assertEquals(b.get_and_inc_quota_value('key', 'zone2', '20170411'), 1)
+
+
+class CacheBackendTestCase(MemoryBackendTestCase):
+    """ do the same tests as MemoryBackendTestCase but w/ CacheBackend """
+
+    def get_backend(self):
+        # ensure we have a fresh cache backend each time
+        c = CacheBackend()
+        c.cache.clear()
+        return c
