@@ -51,7 +51,6 @@ class RegistrationViewTestCase(TestCase):
         # ensure redirect to / (OK that it is a 404)
         self.assertRedirects(response, '/', target_status_code=404)
 
-
     def test_invalid_post(self):
         # invalid post - missing fields
         response = self.client.post('/register/',

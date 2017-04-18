@@ -28,5 +28,3 @@ class TierAdmin(admin.ModelAdmin):
     inlines = [
         LimitInline,
     ]
-
-

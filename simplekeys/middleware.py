@@ -12,9 +12,11 @@ class SimpleKeysMiddleware(object):
             self.zone = zone
 
     def process_request(self, request):
-        key = request.META.get(getattr(settings, 'SIMPLEKEYS_HEADER', 'HTTP_X_API_KEY'))
+        key = request.META.get(getattr(settings, 'SIMPLEKEYS_HEADER',
+                                       'HTTP_X_API_KEY'))
         if not key:
-            key = request.GET.get(getattr(settings, 'SIMPLEKEYS_QUERY_PARAM', 'apikey'))
+            key = request.GET.get(getattr(settings, 'SIMPLEKEYS_QUERY_PARAM',
+                                          'apikey'))
 
         try:
             verify(key, self.zone)

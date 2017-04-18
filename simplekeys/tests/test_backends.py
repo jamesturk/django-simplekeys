@@ -23,20 +23,34 @@ class MemoryBackendTestCase(TestCase):
     def test_key_and_zone_independence(self):
         b = self.get_backend()
         b.set_token_count('key', 'zone', 100)
-        self.assertEquals(b.get_tokens_and_timestamp('key2', 'zone'), (0, None))
-        self.assertEquals(b.get_tokens_and_timestamp('key', 'zone2'), (0, None))
+        self.assertEquals(b.get_tokens_and_timestamp('key2', 'zone'),
+                          (0, None))
+        self.assertEquals(b.get_tokens_and_timestamp('key', 'zone2'),
+                          (0, None))
 
     def test_get_and_inc_quota(self):
         b = self.get_backend()
-        self.assertEquals(b.get_and_inc_quota_value('key', 'zone', '20170411'), 1)
-        self.assertEquals(b.get_and_inc_quota_value('key', 'zone', '20170411'), 2)
-        self.assertEquals(b.get_and_inc_quota_value('key', 'zone', '20170412'), 1)
+        self.assertEquals(
+            b.get_and_inc_quota_value('key', 'zone', '20170411'), 1
+        )
+        self.assertEquals(
+            b.get_and_inc_quota_value('key', 'zone', '20170411'), 2
+        )
+        self.assertEquals(
+            b.get_and_inc_quota_value('key', 'zone', '20170412'), 1
+        )
 
     def test_get_and_inc_quota_key_and_zone_independence(self):
         b = self.get_backend()
-        self.assertEquals(b.get_and_inc_quota_value('key', 'zone', '20170411'), 1)
-        self.assertEquals(b.get_and_inc_quota_value('key2', 'zone', '20170411'), 1)
-        self.assertEquals(b.get_and_inc_quota_value('key', 'zone2', '20170411'), 1)
+        self.assertEquals(
+            b.get_and_inc_quota_value('key', 'zone', '20170411'), 1
+        )
+        self.assertEquals(
+            b.get_and_inc_quota_value('key2', 'zone', '20170411'), 1
+        )
+        self.assertEquals(
+            b.get_and_inc_quota_value('key', 'zone2', '20170411'), 1
+        )
 
 
 class CacheBackendTestCase(MemoryBackendTestCase):

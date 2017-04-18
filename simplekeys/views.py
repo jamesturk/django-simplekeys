@@ -111,7 +111,7 @@ class ConfirmationView(View):
             # update the key
             try:
                 key = Key.objects.get(key=form.cleaned_data['key'],
-                                    status='u')
+                                      status='u')
             except Key.DoesNotExist:
                 return HttpResponseBadRequest('invalid request')
 
