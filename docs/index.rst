@@ -26,6 +26,8 @@ Usage
 
 4) In the Django admin, create at least one ``Tier``, and add limits for the ``Zone`` you defined earlier.
 
+5) If you wish to use the provided key registration views, TODO
+
 .. warning::
 
     If you do not create an association between a ``Tier`` and a ``Zone`` then users will not be able to access any views that you define as being within a given ``Zone``.
@@ -66,43 +68,14 @@ Key
     your custom registration view.
 
 
-Configuration
--------------
 
-``SIMPLEKEYS_HEADER``
-    HTTP header that ``simplekeys.middleware.SimpleKeysMiddleware`` and
-    ``simplekeys.middleware.require_apikey`` will check for presence of 
-    API key.
-
-    Default: ``HTTP_X_API_KEY``
-
-``SIMPLEKEYS_QUERY_PARAM``
-    HTTP query parameter that ``simplekeys.middleware.SimpleKeysMiddleware``
-    and ``simplekeys.middleware.require_apikey`` will check for presence of
-    API key.  (This check occurs after ``SIMPLEKEYS_HEADER`` check.)
-
-    Default: ``apikey``
-
-``SIMPLEKEYS_DEFAULT_ZONE``
-    In the simplest setup, simplekeys will consider all requests part of the
-    same :ref:`Zone`.  This is the slug for that Zone.
-
-    Default: ``default``
-
-``SIMPLEKEYS_CACHE``
-    ``settings.CACHE`` entry to use for ``simplekeys.backends.CacheBackend``
-
-    Default: ``default``
-
-``SIMPLEKEYS_CACHE_TIMEOUT``
-    Timeout for entries created by ``simplekeys.backends.CacheBackend``
-
-    Default: ``25*60*60`` (25 hours)
-
+Further Reading
+---------------
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+
+   advanced
 
 
 Indices and tables
