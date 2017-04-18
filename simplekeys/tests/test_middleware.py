@@ -1,6 +1,6 @@
-from django.test import TestCase, Client
-from simplekeys.models import Tier, Zone, Key
-from simplekeys.verifier import backend
+from django.test import TestCase
+from ..models import Tier, Zone, Key
+from ..verifier import backend
 
 
 class MiddlewareTestCase(TestCase):

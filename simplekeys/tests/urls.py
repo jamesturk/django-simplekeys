@@ -1,3 +1,6 @@
+"""
+    URLs only for test purposes
+"""
 from django.conf.urls import url
 from django.contrib import admin
 
