@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 
 
@@ -18,10 +19,16 @@ class Tier(models.Model):
     slug = models.SlugField(max_length=50, unique=True)
     name = models.CharField(max_length=50)
 
+    def __str__(self):
+        return self.name
+
 
 class Zone(models.Model):
     slug = models.SlugField(max_length=50, unique=True)
     name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
 
 
 class Limit(models.Model):
@@ -39,7 +46,7 @@ class Limit(models.Model):
 
 
 class Key(models.Model):
-    key = models.CharField(max_length=40, unique=True)
+    key = models.CharField(max_length=40, unique=True, default=uuid.uuid4)
     status = models.CharField(max_length=1, choices=KEY_STATUSES)
     tier = models.ForeignKey(Tier, related_name='keys')
 
@@ -49,3 +56,7 @@ class Key(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return '{} ({})'.format(self.email, self.key)
+
