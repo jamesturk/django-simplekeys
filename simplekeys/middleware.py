@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.http import JsonResponse
-from django.utils.decorators import decorator_from_middleware_with_args
 from .verifier import verify, VerificationError, RateLimitError, QuotaError
 
 
@@ -29,6 +28,3 @@ class SimpleKeysMiddleware(object):
 
         # pass through
         return None
-
-
-require_apikey = decorator_from_middleware_with_args(SimpleKeysMiddleware)

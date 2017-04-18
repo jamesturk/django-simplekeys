@@ -2,14 +2,14 @@
     views only for test purposes
 """
 from django.http import JsonResponse
-from simplekeys.middleware import require_apikey
+from simplekeys.decorators import key_required
 
 
-@require_apikey()
+@key_required()
 def example(request):
     return JsonResponse({'response': 'OK'})
 
 
-@require_apikey(zone='special')
+@key_required(zone='special')
 def special(request):
     return JsonResponse({'response': 'special'})

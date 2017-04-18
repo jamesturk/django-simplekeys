@@ -1,0 +1,5 @@
+from django.utils.decorators import decorator_from_middleware_with_args
+
+from .middleware import SimpleKeysMiddleware
+
+key_required = decorator_from_middleware_with_args(SimpleKeysMiddleware)
