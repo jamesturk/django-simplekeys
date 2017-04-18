@@ -4,7 +4,7 @@ from django.contrib.sites.models import Site
 from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 from django.template import loader
-from django.views import View
+from django.views.generic import View
 from django.http import HttpResponseBadRequest
 
 from .forms import KeyRegistrationForm, KeyConfirmationForm
