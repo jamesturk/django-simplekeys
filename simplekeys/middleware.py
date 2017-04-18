@@ -4,12 +4,12 @@ from django.utils.decorators import decorator_from_middleware
 from .verifier import verify, VerificationError, RateLimitError, QuotaError
 
 
-class SimpleKeyMiddleware(object):
+class SimpleKeysMiddleware(object):
     def process_request(self, request):
-        key = request.META.get(getattr(settings, 'SIMPLEKEY_HEADER', 'HTTP_X_API_KEY'))
+        key = request.META.get(getattr(settings, 'SIMPLEKEYS_HEADER', 'HTTP_X_API_KEY'))
         if not key:
-            key = request.GET.get(getattr(settings, 'SIMPLEKEY_QUERY_PARAM', 'apikey'))
-        zone = getattr(settings, 'SIMPLEKEY_DEFAULT_ZONE', 'default')
+            key = request.GET.get(getattr(settings, 'SIMPLEKEYS_QUERY_PARAM', 'apikey'))
+        zone = getattr(settings, 'SIMPLEKEYS_DEFAULT_ZONE', 'default')
 
         try:
             verify(key, zone)
@@ -24,4 +24,4 @@ class SimpleKeyMiddleware(object):
         return None
 
 
-require_apikey = decorator_from_middleware(SimpleKeyMiddleware)
+require_apikey = decorator_from_middleware(SimpleKeysMiddleware)
