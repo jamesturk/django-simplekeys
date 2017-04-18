@@ -109,7 +109,12 @@ class ConfirmationView(View):
                 return HttpResponseBadRequest('invalid request')
 
             # update the key
-            key = Key.objects.get(key=form.cleaned_data['key'])
+            try:
+                key = Key.objects.get(key=form.cleaned_data['key'],
+                                    status='u')
+            except Key.DoesNotExist:
+                return HttpResponseBadRequest('invalid request')
+
             key.status = 'a'
             key.save()
             return render(request, self.confirmed_template_name, {'key': key})
