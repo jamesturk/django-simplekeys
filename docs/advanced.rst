@@ -14,16 +14,6 @@ tiers.  The default key registration view accepts an optional ``tier``
 parameter that allows you to pass a tier slug (defaults to ``default``).
 
 
-Multiple Zones
---------------
-
-Most APIs can get by with a single zone, but perhaps you have some methods that are computationally expensive and so you need a lower rate limit to prevent your server from being overwhelmed.
-
-The default middleware will group all views into the ``SIMPLEKEYS_DEFAULT_ZONE``, but with the decorator it is possible to override this zone.
-
-By passing the zone's slug to the ``zone`` argument of ``simplekeys.middleware.require_apikey`` the view in question will be authorized using the ``zone`` argument.
-
-
 API Key Registration
 --------------------
 
@@ -35,8 +25,8 @@ or not requiring email registration, it is recommended you do so by
 programatically creating Key objects.
 
 
-Rate Limiting Backends
-----------------------
+Custom Rate Limiting Backends
+-----------------------------
 
 Keeping track of how many times a key is used requires some semi-permanent storage that is relatively cheap to access.
 
@@ -49,27 +39,28 @@ In both of these cases, the rate-limiting data is somewhat ephemeral, a process 
 If you write a rate limiting backend that you think others might find useful, please consider contributing back to the project.
 
 
-Configuration
--------------
+.. _advanced-settings:
+
+Advanced Settings
+-----------------
 
 ``SIMPLEKEYS_DEFAULT_ZONE``
-    If you use the ``SimpleKeysMiddleware`` or ``require_apikey`` without
+    If you use the ``SimpleKeysMiddleware`` or :func:``key_required`` without
     a ``zone`` parameter, simplekeys will consider your view part of this
     zone.
 
     Default: ``default``
 
 ``SIMPLEKEYS_HEADER``
-    HTTP header that ``simplekeys.middleware.SimpleKeysMiddleware`` and
-    ``simplekeys.middleware.require_apikey`` will check for presence of 
-    API key.
+    HTTP header that ``SimpleKeysMiddleware`` and ``key_required`` will check
+    for presence of API key.
 
     Default: ``HTTP_X_API_KEY``
 
 ``SIMPLEKEYS_QUERY_PARAM``
-    HTTP query parameter that ``simplekeys.middleware.SimpleKeysMiddleware``
-    and ``simplekeys.middleware.require_apikey`` will check for presence of
-    API key.  (This check occurs after ``SIMPLEKEYS_HEADER`` check.)
+    HTTP query parameter that ``SimpleKeysMiddleware`` and ``key_required``
+    will check for presence of API key.  (This check occurs after
+    ``SIMPLEKEYS_HEADER`` check.)
 
     Default: ``apikey``
 
