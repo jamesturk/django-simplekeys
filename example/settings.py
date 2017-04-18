@@ -19,6 +19,8 @@ INSTALLED_APPS = [
     'simplekeys',
 ]
 
+SIMPLEKEYS_RATE_LIMIT_BACKEND = 'simplekeys.backends.MemoryBackend'
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

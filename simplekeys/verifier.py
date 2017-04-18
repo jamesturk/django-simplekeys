@@ -1,8 +1,10 @@
 from __future__ import division
 import time
 import datetime
+from django.conf import settings
+from django.utils.module_loading import import_string
+
 from .models import Key, Limit
-from .backends import MemoryBackend
 
 
 class VerificationError(Exception):
@@ -17,7 +19,10 @@ class QuotaError(Exception):
     pass
 
 
-backend = MemoryBackend()
+# load backend from setting
+backend = getattr(settings, 'SIMPLEKEYS_RATE_LIMIT_BACKEND',
+                  'simplekeys.backends.CacheBackend')
+backend = import_string(backend)()
 
 
 def verify(key, zone):

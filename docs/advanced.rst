@@ -10,7 +10,8 @@ each tier has an association with each zone unless you intend to prevent
 a given tier from accessing that zone at all.
 
 simplekeys makes no assumptions about how you want to associate users with
-tiers.  The default key registration views place keys into ``SIMPLEKEYS_DEFAULT_TIER``, if you wish to change that you'll need to write your own views or manually edit users tiers via the Django admin.
+tiers.  The default key registration view accepts an optional ``tier``
+parameter that allows you to pass a tier slug (defaults to ``default``).
 
 
 Multiple Zones
@@ -51,6 +52,13 @@ If you write a rate limiting backend that you think others might find useful, pl
 Configuration
 -------------
 
+``SIMPLEKEYS_DEFAULT_ZONE``
+    If you use the ``SimpleKeysMiddleware`` or ``require_apikey`` without
+    a ``zone`` parameter, simplekeys will consider your view part of this
+    zone.
+
+    Default: ``default``
+
 ``SIMPLEKEYS_HEADER``
     HTTP header that ``simplekeys.middleware.SimpleKeysMiddleware`` and
     ``simplekeys.middleware.require_apikey`` will check for presence of 
@@ -65,18 +73,10 @@ Configuration
 
     Default: ``apikey``
 
-``SIMPLEKEYS_DEFAULT_ZONE``
-    If you use the ``SimpleKeysMiddleware`` or ``require_apikey`` without
-    a ``zone`` parameter, simplekeys will consider your view part of this
-    zone.
+``SIMPLEKEYS_RATE_LIMIT_BACKEND``
+    String representing full import path to a rate limit backend.
 
-    Default: ``default``
-
-``SIMPLEKEYS_DEFAULT_TIER``
-    Used by the optional registration views, keys will be created within this
-    tier.
-
-    Default: ``default``
+    Default: ``simplekeys.backends.CacheBackend``
 
 ``SIMPLEKEYS_CACHE``
     ``settings.CACHE`` entry to use for ``simplekeys.backends.CacheBackend``
