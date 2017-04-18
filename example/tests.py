@@ -17,11 +17,26 @@ class MiddlewareTestCase(TestCase):
             requests_per_second=2,
             burst_size=10,
         )
+        self.gold = Tier.objects.create(slug='gold', name='Gold')
+        self.special = Zone.objects.create(slug='special', name='Special')
+        self.gold.limits.create(
+            zone=self.special,
+            quota_requests=10,
+            quota_period='d',
+            requests_per_second=2,
+            burst_size=10,
+        )
         Key.objects.create(
             key='bronze',
             status='a',
             tier=self.bronze,
             email='bronze1@example.com',
+        )
+        Key.objects.create(
+            key='gold',
+            status='a',
+            tier=self.gold,
+            email='gold@example.com',
         )
 
     def test_view_no_key(self):
@@ -36,6 +51,13 @@ class MiddlewareTestCase(TestCase):
         response = self.client.get('/example/?apikey=bronze')
         self.assertEquals(response.status_code, 200)
 
+    def test_view_zone(self):
+        # ensure that bronze can't get here, but gold can
+        response = self.client.get('/special/?apikey=bronze')
+        self.assertEquals(response.status_code, 403)
+        response = self.client.get('/special/?apikey=gold')
+        self.assertEquals(response.status_code, 200)
+
     def test_view_key_429(self):
         for x in range(10):
             response = self.client.get('/example/?apikey=bronze')
@@ -44,4 +66,4 @@ class MiddlewareTestCase(TestCase):
         response = self.client.get('/example/?apikey=bronze')
         self.assertEquals(response.status_code, 429)
 
-    # we won't test everything else, verifier tests take care of that
+        # we won't test everything else, verifier tests take care of that

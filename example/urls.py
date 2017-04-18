@@ -6,4 +6,5 @@ from . import views
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^example/$', views.example),
+    url(r'^special/$', views.special),
 ]
