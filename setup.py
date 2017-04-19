@@ -5,6 +5,7 @@ setup(
     version="0.2.0",
     packages=find_packages(),
     include_package_data=True,
+    zip_safe=False,
     description='Django API Key management & validation',
     author='James Turk',
     author_email='james.p.turk@gmail.com',
