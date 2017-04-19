@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='django-simplekeys',
-    version="0.1.0",
+    version="0.2.0",
     packages=find_packages(),
     include_package_data=True,
     description='Django API Key management & validation',
@@ -10,7 +10,7 @@ setup(
     author_email='james.p.turk@gmail.com',
     license='MIT License',
     url='http://github.com/jamesturk/django-simplekeys/',
-    long_description="",
+    long_description=open('README.rst').read(),
     platforms=["any"],
     install_requires=[
         "Django",
