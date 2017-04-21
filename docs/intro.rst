@@ -5,6 +5,7 @@ Step 1- Configure Settings
 --------------------------
 
 * Add ``simplekeys`` to ``INSTALLED_APPS`` as you would any app.
+* Be sure to run the ``migrate`` command after adding the app to your project.
 * If you want to protect every view in your app you can install :class:`simplekeys.middleware.SimpleKeysMiddleware` in your ``MIDDLEWARE_CLASSES`` setting.
 * If you plan on using the provided registration view be sure you've set `DEFAULT_FROM_EMAIL <https://docs.djangoproject.com/en/1.11/ref/settings/#default-from-email>`_.
 * Unless otherwise configured simplekeys will use Django's ``CACHE['default']`` to store ephemeral information used for rate-limiting.  Depending on your use case it may
