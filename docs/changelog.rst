@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.3.0
+-----
+**2017-04-21**
+
+    * made organization optional & added optional website & usage fields to Key
+      (requires migration!)
+
 
 0.2.0
 -----
