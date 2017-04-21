@@ -127,13 +127,21 @@ Models
 
         Email address associated with the key.
 
-    .. py:attribute:: tier
+    .. py:attribute:: name
 
-        Name associated with the key.
+        Name of individual associated with the key.
 
-    .. py:attribute:: tier
+    .. py:attribute:: organization
 
         (Optional) organization associated with the key.
+
+    .. py:attribute:: website
+
+        (Optional) website associated with the key.
+
+    .. py:attribute:: usage
+
+        (Optional) Description of intended usage of the API key.
 
 .. _views:
 
