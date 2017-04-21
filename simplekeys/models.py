@@ -52,7 +52,9 @@ class Key(models.Model):
 
     email = models.EmailField(unique=True)
     name = models.CharField(max_length=100)
-    organization = models.CharField(max_length=100)
+    organization = models.CharField(max_length=100, blank=True)
+    usage = models.TextField('Intended Usage', blank=True)
+    website = models.URLField(blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

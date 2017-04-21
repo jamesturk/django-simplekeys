@@ -52,7 +52,7 @@ class RegistrationViewTestCase(TestCase):
         self.assertRedirects(response, '/', target_status_code=404)
 
     def test_invalid_post(self):
-        # invalid post - missing fields
+        # invalid post - missing email
         response = self.client.post('/register/',
                                     {'name': 'Amy',
                                      }
@@ -60,7 +60,7 @@ class RegistrationViewTestCase(TestCase):
 
         # response should be the page w/ errors on the form
         self.assertEquals(response.status_code, 200)
-        self.assertEquals(len(response.context['form'].errors), 2)
+        self.assertEquals(len(response.context['form'].errors), 1)
 
         # no email is sent
         self.assertEqual(len(mail.outbox), 0)

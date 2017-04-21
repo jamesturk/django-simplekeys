@@ -5,7 +5,7 @@ from .models import Key
 class KeyRegistrationForm(forms.ModelForm):
     class Meta:
         model = Key
-        fields = ['email', 'name', 'organization']
+        fields = ['email', 'name', 'website', 'organization', 'usage']
 
 
 class KeyConfirmationForm(forms.Form):
