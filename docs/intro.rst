@@ -6,7 +6,6 @@ Step 1- Configure Settings
 
 * Add ``simplekeys`` to ``INSTALLED_APPS`` as you would any app.
 * Be sure to run the ``migrate`` command after adding the app to your project.
-* If you want to protect every view in your app you can install :class:`simplekeys.middleware.SimpleKeysMiddleware` in your ``MIDDLEWARE_CLASSES`` setting.
 * If you plan on using the provided registration view be sure you've set `DEFAULT_FROM_EMAIL <https://docs.djangoproject.com/en/1.11/ref/settings/#default-from-email>`_.
 * Unless otherwise configured simplekeys will use Django's ``CACHE['default']`` to store ephemeral information used for rate-limiting.  Depending on your use case it may
   be desirable to configure Django's cache with this in mind.
@@ -29,9 +28,30 @@ For more detail on these concepts, see :ref:`models`.
 Step 3- Protect API Views
 -------------------------
 
-Unless you used ``simplekeys.middleware.SimpleKeysMiddleware`` in Step 1, you'll need to let Django know which views require API keys.
+There are two ways to let Django know which views are protected and assign them
+to particular zones:
 
-This can be done using the :func:`key_required` decorator, it might look like::
+    * ``simplekeys.middleware.SimpleKeysMiddleware`` allows you to define views by regex, similar to a urlconf.  The downside is that this check has to happen on every request.  
+    * You can also use the :func:`key_required` decorator to annotate certain views, this will be more efficient, but requires you to decorate views individually- which may be difficult depending upon your setup.
+
+If you add ``simplekeys.middleware.SimpleKeysMiddleware`` to your installed
+middleware, by default it will protect every view.  Unless your app is very
+simple (and you don't use the Django admin, etc.) you probably also want to
+add the ``SIMPLEKEYS_ZONE_PATHS`` setting.
+
+``SIMPLEKEYS_ZONE_PATHS`` is a list of tuples that looks like::
+
+    SIMPLEKEYS_ZONE_PATHS = [
+        ('/api/v1/legislators/geo/', 'geo'),
+        ('/api/v1/', 'default'),
+    ]
+
+This would place the ``/api/v1/legislators/geo/`` method into the 'geo' zone
+and all other ``/api/v1/`` methods into the default zone.  These strings are
+matched with ``re.match``- so you can design complex rules as needed.
+
+Alternatively, if you choose to use the :func:`key_required` decorator, 
+it might look like::
 
     @key_required()
     def simple_api_view(request):

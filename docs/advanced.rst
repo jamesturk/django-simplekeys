@@ -247,11 +247,16 @@ Advanced Settings
 -----------------
 
 ``SIMPLEKEYS_DEFAULT_ZONE``
-    If you use the :class:`SimpleKeysMiddleware` or :func:`key_required` without
-    a ``zone`` parameter, simplekeys will consider your view part of this
-    zone.
+    If you use the :func:`key_required` without a ``zone`` parameter, 
+    simplekeys will consider your view part of this zone.
 
     Default: ``default``
+
+``SIMPLEKEYS_ZONE_PATHS``
+    Used in conjunction with :class:`SimpleKeysMiddleware` to associate
+    request paths with zones.
+
+    Default: ``[('.*', 'default')]``
 
 ``SIMPLEKEYS_HEADER``
     HTTP header that :class:`SimpleKeysMiddleware` and :func:`key_required`

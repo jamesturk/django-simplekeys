@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.4.0
+-----
+**2017-05-22**
+
+    * refactored decorator and middleware to be independent
+    * added 
+
 0.3.0
 -----
 **2017-04-21**
