@@ -12,6 +12,8 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^example/$', views.example),
     url(r'^special/$', views.special),
+    url(r'^unprotected/$', views.unprotected),
+    url(r'^via_middleware/$', views.via_middleware),
 
     url(r'^register/$', RegistrationView.as_view()),
     url(r'^register-special/$', RegistrationView.as_view(

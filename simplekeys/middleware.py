@@ -1,16 +1,21 @@
 import re
 from .verifier import verify_request
+try:
+    from django.utils.deprecation import MiddlewareMixin
+except ImportError:
+    MiddlewareMixin = object
 
 
-class SimpleKeysMiddleware(object):
-    def __init__(self):
+class SimpleKeysMiddleware(MiddlewareMixin):
+    def __init__(self, get_response=None):
         self._zones = None
+        self.get_response = get_response
 
     @property
     def zones(self):
         if not self._zones:
             from django.conf import settings
-            zones = getattr(settings, 'SIMPLEKEYS_ZONES',
+            zones = getattr(settings, 'SIMPLEKEYS_ZONE_PATHS',
                             [('.*', 'default')])
 
             self._zones = [

@@ -1,4 +1,5 @@
 import os
+import django
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -20,8 +21,9 @@ INSTALLED_APPS = [
 ]
 
 SIMPLEKEYS_RATE_LIMIT_BACKEND = 'simplekeys.backends.MemoryBackend'
+SIMPLEKEYS_ZONE_PATHS = [('/via.*/', 'default')]
 
-MIDDLEWARE = [
+_MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -29,7 +31,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'simplekeys.middleware.SimpleKeysMiddleware',
 ]
+if django.VERSION >= (1, 11):
+    MIDDLEWARE = _MIDDLEWARE
+else:
+    MIDDLEWARE_CLASSES = _MIDDLEWARE
 
 ROOT_URLCONF = 'simplekeys.tests.urls'
 

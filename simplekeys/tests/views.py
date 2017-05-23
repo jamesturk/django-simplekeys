@@ -13,3 +13,11 @@ def example(request):
 @key_required(zone='special')
 def special(request):
     return JsonResponse({'response': 'special'})
+
+
+def via_middleware(request):
+    return JsonResponse({'response': 'OK'})
+
+
+def unprotected(request):
+    return JsonResponse({'response': 'OK'})

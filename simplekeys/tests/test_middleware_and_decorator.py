@@ -3,7 +3,7 @@ from ..models import Tier, Zone, Key
 from ..verifier import backend
 
 
-class MiddlewareTestCase(TestCase):
+class ViewTestCase(TestCase):
 
     def setUp(self):
         backend.reset()
@@ -66,4 +66,18 @@ class MiddlewareTestCase(TestCase):
         response = self.client.get('/example/?apikey=bronze')
         self.assertEquals(response.status_code, 429)
 
-        # we won't test everything else, verifier tests take care of that
+        # ... we won't test everything else, verifier tests take care of that
+
+    def test_view_protected_via_middleware(self):
+        # make sure middleware doesn't wind up protecting everything
+        response = self.client.get('/via_middleware/')
+        self.assertEquals(response.status_code, 403)
+
+        # and with key
+        response = self.client.get('/via_middleware/?apikey=bronze')
+        self.assertEquals(response.status_code, 200)
+
+    def test_view_unprotected(self):
+        # make sure middleware doesn't wind up protecting everything
+        response = self.client.get('/unprotected/')
+        self.assertEquals(response.status_code, 200)
