@@ -1,12 +1,18 @@
 Changelog
 =========
 
+0.4.1
+-----
+**2017-05-22**
+
+    * slight error message tweak
+
 0.4.0
 -----
 **2017-05-22**
 
     * refactored decorator and middleware to be independent
-    * added 
+    * added SIMPLEKEYS_ZONE_PATHS for middleware
 
 0.3.0
 -----
