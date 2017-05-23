@@ -3,6 +3,7 @@ import time
 import datetime
 from django.conf import settings
 from django.utils.module_loading import import_string
+from django.http import JsonResponse
 
 from .models import Key, Limit
 
@@ -74,3 +75,23 @@ def verify(key, zone):
         ))
 
     return True
+
+
+def verify_request(request, zone):
+    key = request.META.get(getattr(settings, 'SIMPLEKEYS_HEADER',
+                                   'HTTP_X_API_KEY'))
+    if not key:
+        key = request.GET.get(getattr(settings, 'SIMPLEKEYS_QUERY_PARAM',
+                                      'apikey'))
+
+    try:
+        verify(key, zone)
+    except VerificationError as e:
+        return JsonResponse({'error': str(e)}, status=403)
+    except RateLimitError as e:
+        return JsonResponse({'error': str(e)}, status=429)
+    except QuotaError as e:
+        return JsonResponse({'error': str(e)}, status=429)
+
+    # pass through
+    return None
