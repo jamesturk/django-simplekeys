@@ -58,7 +58,7 @@ def verify(key, zone):
         tokens -= 1
         backend.set_token_count(key, zone, tokens)
     else:
-        raise RateLimitError('exhausted tokens {} req/sec, burst {}'.format(
+        raise RateLimitError('exhausted tokens: {} req/sec, burst {}'.format(
             limit.requests_per_second, limit.burst_size
         ))
 
@@ -70,7 +70,7 @@ def verify(key, zone):
 
     if (backend.get_and_inc_quota_value(key, zone, quota_range) >
             limit.quota_requests):
-        raise QuotaError('quota exceeded {}/{}'.format(
+        raise QuotaError('quota exceeded: {}/{}'.format(
             limit.quota_requests, limit.get_quota_period_display()
         ))
 
