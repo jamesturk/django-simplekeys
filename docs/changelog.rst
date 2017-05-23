@@ -1,11 +1,12 @@
 Changelog
 =========
 
-0.4.1
+0.4.2
 -----
 **2017-05-22**
 
-    * slight error message tweak
+    * error message tweak
+    * addition of SIMPLEKEYS_ERROR_NOTE
 
 0.4.0
 -----

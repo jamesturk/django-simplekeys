@@ -286,6 +286,9 @@ Advanced Settings
 
     Default: ``25*60*60`` (25 hours)
 
+``SIMPLEKEYS_ERROR_NOTE``
+    Will be included in error messages, a useful place to direct users to
+    an email address to address their rate quota/etc.
 
 Custom Rate Limiting Backends
 -----------------------------

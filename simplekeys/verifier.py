@@ -80,6 +80,8 @@ def verify(key, zone):
 def verify_request(request, zone):
     key = request.META.get(getattr(settings, 'SIMPLEKEYS_HEADER',
                                    'HTTP_X_API_KEY'))
+    note = getattr(settings, 'SIMPLEKEYS_ERROR_NOTE', None)
+
     if not key:
         key = request.GET.get(getattr(settings, 'SIMPLEKEYS_QUERY_PARAM',
                                       'apikey'))
@@ -87,11 +89,14 @@ def verify_request(request, zone):
     try:
         verify(key, zone)
     except VerificationError as e:
-        return JsonResponse({'error': str(e)}, status=403)
+        return JsonResponse({'error': str(e), 'note': note},
+                            status=403)
     except RateLimitError as e:
-        return JsonResponse({'error': str(e)}, status=429)
+        return JsonResponse({'error': str(e), 'note': note},
+                            status=429)
     except QuotaError as e:
-        return JsonResponse({'error': str(e)}, status=429)
+        return JsonResponse({'error': str(e), 'note': note},
+                            status=429)
 
     # pass through
     return None
