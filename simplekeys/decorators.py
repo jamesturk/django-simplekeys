@@ -8,11 +8,11 @@ def key_required(zone=None):
         zone = getattr(settings, 'SIMPLEKEYS_DEFAULT_ZONE', 'default')
 
     def decorator(func):
-        @wraps
+        @wraps(func)
         def newfunc(request, *args, **kwargs):
             resp = verify_request(request, zone)
-            if not resp:
-                func(request, *args, **kwargs)
+            return resp or func(request, *args, **kwargs)
+
         return newfunc
 
     return decorator
