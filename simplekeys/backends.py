@@ -1,6 +1,8 @@
 import time
-from collections import Counter
+import itertools
+from collections import Counter, defaultdict
 from django.conf import settings
+from .models import Zone
 
 
 class AbstractBackend(object):
@@ -79,3 +81,16 @@ class CacheBackend(AbstractBackend):
         if quota_key not in self.cache:
             self.cache.add(quota_key, 0, timeout=self.timeout)
         return self.cache.incr(quota_key)
+
+    def get_usage(self, key):
+        dates = ['20170501', '20170502', '20170503', '20170504']
+        zones = Zone.objects.all().values_list('slug', flat=True)
+        all_keys = ['{}-{}-{}'.format(key, zone, date) for (zone, date) in
+                    itertools.product(zones, dates)]
+
+        result = defaultdict(Counter)
+        for cache_key, cache_val in self.cache.get_many(all_keys).items():
+            _, zone, date = cache_key.split('-')        # TODO: this will break
+            result[date][zone] = cache_val
+
+        return result

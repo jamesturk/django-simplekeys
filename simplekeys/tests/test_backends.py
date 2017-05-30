@@ -1,6 +1,7 @@
 from django.test import TestCase
 from freezegun import freeze_time
 
+from ..models import Zone
 from ..backends import MemoryBackend, CacheBackend
 
 
@@ -61,3 +62,32 @@ class CacheBackendTestCase(MemoryBackendTestCase):
         c = CacheBackend()
         c.cache.clear()
         return c
+
+    def test_get_usage(self):
+        Zone.objects.create(slug='default', name='Default')
+        Zone.objects.create(slug='special', name='Special')
+        b = self.get_backend()
+
+        # key, zone, day, num
+        usage = [
+            # Key 1 usage
+            ('key1', 'default', '20170501', 20),
+            ('key1', 'default', '20170502', 200),
+            ('key1', 'default', '20170503', 20),
+            ('key1', 'special', '20170502', 5),
+            # Key 2 usage
+            ('key2', 'special', '20170501', 1),
+            ('key2', 'special', '20170502', 1),
+            ('key2', 'special', '20170503', 1),
+        ]
+
+        for key, zone, day, num in usage:
+            for _ in range(num):
+                b.get_and_inc_quota_value(key, zone, day)
+
+        key1usage = b.get_usage('key1')
+        assert key1usage['20170501']['default'] == 20
+        assert key1usage['20170502']['default'] == 200
+        assert key1usage['20170503']['default'] == 20
+        assert key1usage['20170502']['special'] == 5
+        assert key1usage['20170501']['special'] == 0
