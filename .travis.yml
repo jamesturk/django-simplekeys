@@ -8,7 +8,9 @@ env:
     - DJANGO_PACKAGE="Django==1.11"
 install: pip install -r requirements-dev.txt $DJANGO_PACKAGE
 before_script: flake8
-script: PYTHONPATH=. DJANGO_SETTINGS_MODULE=example.settings django-admin test
+script: 
+    - PYTHONPATH=. DJANGO_SETTINGS_MODULE=example.settings django-admin test
+    - flake8
 notifications:
     email:
         - james.p.turk@gmail.com
