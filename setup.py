@@ -16,6 +16,14 @@ setup(
     install_requires=[
         "Django",
     ],
+    extras_require={
+        'dev': [
+            'freezegun',
+            'flake8',
+            'sphinx',
+            'sphinx-rtd-theme',
+        ]
+    },
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
