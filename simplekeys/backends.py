@@ -1,8 +1,9 @@
 import time
 import itertools
-from collections import Counter, defaultdict
+import datetime
+from collections import Counter
 from django.conf import settings
-from .models import Zone
+from .models import Zone, Key
 
 
 class AbstractBackend(object):
@@ -24,6 +25,24 @@ class AbstractBackend(object):
         """
             increment & get quota value
             (value will increase regardless of validity)
+        """
+        raise NotImplementedError()
+
+    def get_usage(self, keys=None, days=7):
+        """
+            get usage in a nested dictionary
+
+            {
+                api_key:  {
+                    date: {
+                        zone: N
+                    }
+                }
+            }
+
+            such that result['apikey']['20170501']['default'] is equal to the
+            number of requests made by 'apikey' to 'default' zone endpoints on
+            May 1, 2017.
         """
         raise NotImplementedError()
 
@@ -82,15 +101,19 @@ class CacheBackend(AbstractBackend):
             self.cache.add(quota_key, 0, timeout=self.timeout)
         return self.cache.incr(quota_key)
 
-    def get_usage(self, key):
-        dates = ['20170501', '20170502', '20170503', '20170504']
+    def get_usage(self, keys=None, days=7):
+        today = datetime.date.today()
+        dates = [(today - datetime.timedelta(days=d)).strftime('%Y%m%d')
+                 for d in range(days)]
         zones = Zone.objects.all().values_list('slug', flat=True)
-        all_keys = ['{}-{}-{}'.format(key, zone, date) for (zone, date) in
-                    itertools.product(zones, dates)]
+        if not keys:
+            keys = Key.objects.all().values_list('key', flat=True)
+        all_keys = ['{}-{}-{}'.format(key, zone, date) for (key, zone, date) in
+                    itertools.product(keys, zones, dates)]
 
-        result = defaultdict(Counter)
+        result = {k: {d: Counter() for d in dates} for k in keys}
         for cache_key, cache_val in self.cache.get_many(all_keys).items():
-            _, zone, date = cache_key.split('-')        # TODO: this will break
-            result[date][zone] = cache_val
+            key, zone, date = cache_key.split('-')     # TODO: this will break
+            result[key][date][zone] = cache_val
 
         return result
