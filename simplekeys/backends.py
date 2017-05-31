@@ -79,7 +79,7 @@ class CacheBackend(AbstractBackend):
         self.timeout = getattr(settings, 'SIMPLEKEYS_CACHE_TIMEOUT', 25*60*60)
 
     def get_tokens_and_timestamp(self, key, zone):
-        kz = '{}-{}'.format(key, zone)
+        kz = '{}~{}'.format(key, zone)
         # once we drop Django 1.8 support we can use
         # return self.cache.get_or_set(kz, (0, None), self.timeout)
         val = self.cache.get(kz)
@@ -90,11 +90,11 @@ class CacheBackend(AbstractBackend):
         return val
 
     def set_token_count(self, key, zone, tokens):
-        kz = '{}-{}'.format(key, zone)
+        kz = '{}~{}'.format(key, zone)
         self.cache.set(kz, (tokens, time.time()), self.timeout)
 
     def get_and_inc_quota_value(self, key, zone, quota_range):
-        quota_key = '{}-{}-{}'.format(key, zone, quota_range)
+        quota_key = '{}~{}~{}'.format(key, zone, quota_range)
         # once we drop Django 1.8 support we can use
         # self.cache.get_or_set(quota_key, 0, timeout=self.timeout)
         if quota_key not in self.cache:
@@ -108,12 +108,12 @@ class CacheBackend(AbstractBackend):
         zones = Zone.objects.all().values_list('slug', flat=True)
         if not keys:
             keys = Key.objects.all().values_list('key', flat=True)
-        all_keys = ['{}-{}-{}'.format(key, zone, date) for (key, zone, date) in
+        all_keys = ['{}~{}~{}'.format(key, zone, date) for (key, zone, date) in
                     itertools.product(keys, zones, dates)]
 
         result = {k: {d: Counter() for d in dates} for k in keys}
         for cache_key, cache_val in self.cache.get_many(all_keys).items():
-            key, zone, date = cache_key.split('-')     # TODO: this will break
+            key, zone, date = cache_key.split('~')     # TODO: this will break
             result[key][date][zone] = cache_val
 
         return result
