@@ -1,7 +1,7 @@
 from django.test import TestCase
 from freezegun import freeze_time
 
-from ..models import Zone
+from ..models import Zone, Key, Tier
 from ..backends import MemoryBackend, CacheBackend
 
 
@@ -66,6 +66,9 @@ class CacheBackendTestCase(MemoryBackendTestCase):
     def test_get_usage(self):
         Zone.objects.create(slug='default', name='Default')
         Zone.objects.create(slug='special', name='Special')
+        tier = Tier.objects.create(slug='default')
+        Key.objects.create(key='key1', tier=tier, email='key1@example.com')
+        Key.objects.create(key='key2', tier=tier, email='key2@example.com')
         b = self.get_backend()
 
         # key, zone, day, num
@@ -85,9 +88,16 @@ class CacheBackendTestCase(MemoryBackendTestCase):
             for _ in range(num):
                 b.get_and_inc_quota_value(key, zone, day)
 
-        key1usage = b.get_usage('key1')
-        assert key1usage['20170501']['default'] == 20
-        assert key1usage['20170502']['default'] == 200
-        assert key1usage['20170503']['default'] == 20
-        assert key1usage['20170502']['special'] == 5
-        assert key1usage['20170501']['special'] == 0
+        with freeze_time('2017-05-05'):
+            key1usage = b.get_usage()['key1']
+            assert key1usage['20170501']['default'] == 20
+            assert key1usage['20170502']['default'] == 200
+            assert key1usage['20170503']['default'] == 20
+            assert key1usage['20170502']['special'] == 5
+            assert key1usage['20170501']['special'] == 0
+
+        # ensure we only get requested data
+        with freeze_time('2017-05-15'):
+            usage = b.get_usage(keys=['key1'], days=2)
+            assert len(usage) == 1
+            assert len(usage['key1']) == 2

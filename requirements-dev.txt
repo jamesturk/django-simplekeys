@@ -1,4 +1,0 @@
-freezegun
-flake8
-sphinx
-sphinx-rtd-theme
