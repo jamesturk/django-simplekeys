@@ -6,3 +6,4 @@ docs/_templates
 *.egg-info
 dist/
 build/
+.tox
