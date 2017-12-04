@@ -1,7 +1,6 @@
 language: python
 python:
     - "2.7"
-    - "3.5"
     - "3.6"
 env:
     - DJANGO_PACKAGE="Django>=1.8,<1.9"
@@ -10,6 +9,10 @@ env:
 install: pip install -e .[dev] $DJANGO_PACKAGE
 before_script: flake8
 script: PYTHONPATH=. DJANGO_SETTINGS_MODULE=example.settings django-admin test
+matrix:
+  exclude:
+    - python: "2.7"
+      env: DJANGO_PACKAGE="Django==2.0"
 notifications:
     email:
         - dev@jamesturk.net
