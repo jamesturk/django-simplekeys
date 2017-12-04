@@ -6,9 +6,10 @@ python:
 env:
     - DJANGO_PACKAGE="Django>=1.8,<1.9"
     - DJANGO_PACKAGE="Django==1.11"
+    - DJANGO_PACKAGE="Django==2.0"
 install: pip install -e .[dev] $DJANGO_PACKAGE
 before_script: flake8
 script: PYTHONPATH=. DJANGO_SETTINGS_MODULE=example.settings django-admin test
 notifications:
     email:
-        - james.p.turk@gmail.com
+        - dev@jamesturk.net
