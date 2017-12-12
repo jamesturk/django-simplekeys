@@ -32,8 +32,8 @@ class Zone(models.Model):
 
 
 class Limit(models.Model):
-    tier = models.ForeignKey(Tier, related_name='limits')
-    zone = models.ForeignKey(Zone, related_name='limits')
+    tier = models.ForeignKey(Tier, related_name='limits', on_delete=models.CASCADE)
+    zone = models.ForeignKey(Zone, related_name='limits', on_delete=models.CASCADE)
     quota_period = models.CharField(max_length=1, choices=QUOTA_PERIODS)
     quota_requests = models.PositiveIntegerField()
     requests_per_second = models.PositiveIntegerField()
@@ -48,7 +48,7 @@ class Limit(models.Model):
 class Key(models.Model):
     key = models.CharField(max_length=40, unique=True, default=uuid.uuid4)
     status = models.CharField(max_length=1, choices=KEY_STATUSES)
-    tier = models.ForeignKey(Tier, related_name='keys')
+    tier = models.ForeignKey(Tier, related_name='keys', on_delete=models.PROTECT)
 
     email = models.EmailField(unique=True)
     name = models.CharField(max_length=100)

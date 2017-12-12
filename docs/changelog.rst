@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.5.0
+-----
+    * exportkeys management command
+
 0.4.2
 -----
 **2017-05-22**
