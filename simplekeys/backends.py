@@ -1,7 +1,7 @@
 import time
 import itertools
 import datetime
-from collections import Counter, defaultdict
+from collections import Counter
 from django.conf import settings
 from .models import Zone, Key
 
