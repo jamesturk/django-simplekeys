@@ -4,6 +4,7 @@ Changelog
 0.5.0
 -----
     * exportkeys management command
+    * usagereport management command
 
 0.4.2
 -----
