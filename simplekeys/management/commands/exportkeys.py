@@ -17,5 +17,10 @@ class Command(BaseCommand):
         dw = csv.DictWriter(self.stdout, fields)
         dw.writeheader()
 
-        for key in Key.objects.all().order_by('created_at'):
+        qs = Key.objects.all()
+
+        if options['since']:
+            qs = qs.filter(created_at__gte=options['since'])
+
+        for key in qs.order_by('created_at'):
             dw.writerow({f: getattr(key, f) for f in fields})

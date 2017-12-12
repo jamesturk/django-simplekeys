@@ -25,10 +25,19 @@ class ExportKeysTestCase(TestCase):
             call_command('exportkeys')
 
             stdout.seek(0)
-            
+
             data = list(csv.DictReader(stdout))
             self.assertEquals(len(data), 4)
             self.assertEquals(data[0]['key'], 'one')
             self.assertEquals(data[1]['tier'], 'Gold')
             self.assertEquals(data[2]['status'], 'u')
             self.assertEquals(data[3]['email'], 'four@example.com')
+
+    def test_export_flags(self):
+        offset = Key.objects.all().order_by('created_at')[1]
+
+        with captured_stdout() as stdout:
+            call_command('exportkeys', '--since=' + offset.created_at.isoformat())
+            stdout.seek(0)
+            data = list(csv.DictReader(stdout))
+            self.assertEquals(len(data), 3)
