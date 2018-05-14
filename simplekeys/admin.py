@@ -7,6 +7,7 @@ from .models import Tier, Zone, Limit, Key
 class KeyAdmin(admin.ModelAdmin):
     list_display = ('key', 'email', 'name', 'tier', 'status', 'created_at')
     list_filter = ('tier', 'status')
+    search_fields = ('email', 'name', 'key')
     list_select_related = ('tier',)
 
 
