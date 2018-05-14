@@ -1,8 +1,14 @@
 Changelog
 =========
 
+0.5.1
+-----
+**2018-05-18**
+    * added abillity to search keys to admin
+
 0.5.0
 -----
+**2017-12-12**
     * exportkeys management command
     * usagereport management command
 
