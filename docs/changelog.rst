@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.5.2
+-----
+    * add missing migration
+
 0.5.1
 -----
 **2018-05-18**
