@@ -3,6 +3,7 @@ Changelog
 
 0.5.2
 -----
+**2018-10-29**
     * add missing migration
 
 0.5.1

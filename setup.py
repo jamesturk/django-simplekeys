@@ -2,13 +2,13 @@ from setuptools import setup, find_packages
 
 setup(
     name='django-simplekeys',
-    version="0.5.1",
+    version="0.5.2",
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
     description='Django API Key management & validation',
     author='James Turk',
-    author_email='james.p.turk@gmail.com',
+    author_email='dev@jamesturk.net',
     license='MIT License',
     url='http://github.com/jamesturk/django-simplekeys/',
     long_description=open('README.rst').read(),
@@ -35,8 +35,8 @@ setup(
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
     ],
 )
