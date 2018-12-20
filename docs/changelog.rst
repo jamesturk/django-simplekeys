@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.5.3
+-----
+**2018-12-19**
+    * reactivating an active key doesn't show unhelpful error message anymore
+
 0.5.2
 -----
 **2018-10-29**

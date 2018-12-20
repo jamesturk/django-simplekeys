@@ -106,17 +106,17 @@ class ConfirmationView(View):
             hash = _get_confirm_hash(form.cleaned_data['key'],
                                      form.cleaned_data['email'])
             if hash != form.cleaned_data['confirm_hash']:
-                return HttpResponseBadRequest('invalid request')
+                return HttpResponseBadRequest('invalid request - bad hash')
 
             # update the key
             try:
                 key = Key.objects.get(key=form.cleaned_data['key'],
-                                      status='u')
+                                      status__in=('u', 'a'))
             except Key.DoesNotExist:
-                return HttpResponseBadRequest('invalid request')
+                return HttpResponseBadRequest('invalid request - no key')
 
             key.status = 'a'
             key.save()
             return render(request, self.confirmed_template_name, {'key': key})
         else:
-            return HttpResponseBadRequest('invalid request')
+            return HttpResponseBadRequest('invalid request - invalid form')
