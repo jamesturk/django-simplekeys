@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='django-simplekeys',
-    version="0.5.3",
+    version="0.6.0",
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
@@ -32,10 +32,7 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Environment :: Web Environment',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
     ],

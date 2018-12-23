@@ -80,14 +80,7 @@ class CacheBackend(AbstractBackend):
 
     def get_tokens_and_timestamp(self, key, zone):
         kz = '{}~{}'.format(key, zone)
-        # once we drop Django 1.8 support we can use
-        # return self.cache.get_or_set(kz, (0, None), self.timeout)
-        val = self.cache.get(kz)
-        if val is None:
-            val = self.cache.add(kz, (0, None), timeout=self.timeout)
-            if val:
-                return self.cache.get(kz)
-        return val
+        return self.cache.get_or_set(kz, (0, None), self.timeout)
 
     def set_token_count(self, key, zone, tokens):
         kz = '{}~{}'.format(key, zone)
@@ -95,10 +88,7 @@ class CacheBackend(AbstractBackend):
 
     def get_and_inc_quota_value(self, key, zone, quota_range):
         quota_key = '{}~{}~{}'.format(key, zone, quota_range)
-        # once we drop Django 1.8 support we can use
-        # self.cache.get_or_set(quota_key, 0, timeout=self.timeout)
-        if quota_key not in self.cache:
-            self.cache.add(quota_key, 0, timeout=self.timeout)
+        self.cache.get_or_set(quota_key, 0, timeout=self.timeout)
         return self.cache.incr(quota_key)
 
     def get_usage(self, keys=None, days=7):
