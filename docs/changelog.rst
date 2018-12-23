@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.6.0
+-----
+    * drop Django 1.x & Python 2 support
+    * use newer Django cache features to improve performance
+
 0.5.3
 -----
 **2018-12-19**

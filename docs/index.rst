@@ -28,8 +28,7 @@ Features
 Requirements
 ------------
 
-* simplekeys currently supports Django 1.8 through Django 1.11. Future versions will drop support for Django <= 1.10.
-* simplekeys is tested against Python 2.7, Python 3.5, and Python 3.6.
+* simplekeys requires Django 2.0 or later and Python 3.6 and later
 
 Further Reading
 ---------------
