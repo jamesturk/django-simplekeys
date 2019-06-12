@@ -7,8 +7,8 @@ API keys to an existing Django project, regardless of API framework.
     * GitHub: https://github.com/jamesturk/django-simplekeys
     * Documentation: https://django-simplekeys.readthedocs.io/en/latest/
 
-.. image:: https://travis-ci.org/jamesturk/django-simplekeys.svg?branch=master
-    :target: https://travis-ci.org/jamesturk/django-simplekeys
+.. image:: https://travis-ci.com/jamesturk/django-simplekeys.svg?branch=master
+    :target: https://travis-ci.com/jamesturk/django-simplekeys
 
 .. image:: https://img.shields.io/pypi/v/django-simplekeys.svg
     :target: https://pypi.python.org/pypi/django-simplekeys
