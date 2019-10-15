@@ -1,9 +1,12 @@
 language: python
 python:
     - "3.6"
+    - "3.7"
+
 env:
     - DJANGO_PACKAGE="Django==2.0"
     - DJANGO_PACKAGE="Django==2.1"
+    - DJANGO_PACKAGE="Django==2.2"
 install: pip install -e .[dev] $DJANGO_PACKAGE
 before_script: flake8
 script: 
