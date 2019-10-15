@@ -1,8 +1,6 @@
 language: python
 python:
-    - "3.6"
     - "3.7"
-
 env:
     - DJANGO_PACKAGE="Django==2.0"
     - DJANGO_PACKAGE="Django==2.1"
