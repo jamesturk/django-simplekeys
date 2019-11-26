@@ -6,7 +6,8 @@ env:
     - DJANGO_PACKAGE="Django==2.0"
     - DJANGO_PACKAGE="Django==2.1"
     - DJANGO_PACKAGE="Django==2.2"
-install: pip install -e .[dev] $DJANGO_PACKAGE
+    - DJANGO_PACKAGE="Django==3.0a1"
+install: pip install -e --pre .[dev] $DJANGO_PACKAGE
 before_script: flake8
 script: 
     - PYTHONPATH=. DJANGO_SETTINGS_MODULE=example.settings django-admin test
