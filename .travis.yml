@@ -4,7 +4,7 @@ python:
     - "3.8"
 env:
     - DJANGO_PACKAGE="Django==2.2"
-    - DJANGO_PACKAGE="Django==3.0rc1"
+    - DJANGO_PACKAGE="Django==3.0"
 install: pip install --pre -e .[dev] $DJANGO_PACKAGE
 before_script: flake8
 script: 
